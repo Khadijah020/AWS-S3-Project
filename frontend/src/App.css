@@ -2,37 +2,99 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+nav {
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+nav ul {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  list-style-type: none;
+}
+
+nav ul li a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.hero {
+  padding: 50px 20px;
+  background: linear-gradient(120deg, #e0f7fa, #ffffff);
+  border-radius: 20px;
+  margin: 20px;
+}
+
+.hero h1 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #555;
+}
+
+.upload-box {
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px dashed #007bff;
+  border-radius: 10px;
+  background-color: #ffffff;
+  width: 80%;
+}
+
+.upload-box p {
+  margin-bottom: 10px;
+  color: #777;
+}
+
+.upload-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-button:hover {
+  background-color: #0056b3;
+}
+
+.cta-banner {
+  background-color: #fdecec;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 10px;
+  text-align: center;
+  color: #333;
+}
+
+.cta-banner p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.signup-button {
+  padding: 10px 20px;
+  background-color: #ff4081;
   color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+.signup-button:hover {
+  background-color: #e91e63;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+footer {
+  background-color: #f5f5f5;
+  padding: 20px;
+  margin-top: 20px;
+  color: #777;
+  font-size: 14px;
 }
