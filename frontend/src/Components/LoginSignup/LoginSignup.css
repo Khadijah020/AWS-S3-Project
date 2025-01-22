@@ -1,73 +1,56 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    background-color: #add8e6; 
-}
-
-
-.container {
-    display: flex;
+.container{
+    display:flex;
     flex-direction: column;
+    margin:auto;
+    margin-top: 200px;
     background: #fff;
-    width: 90%; 
-    max-width: 600px; 
-    padding: 30px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); 
-    border-radius: 10px;
+    width: 600px;
+    padding-bottom: 30px;
 }
 
-.header {
-    display: flex;
+.header{
+    display:flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
+    gap:9px;
     width: 100%;
-    margin-bottom: 20px; 
+    margin-top: 30px;
 }
-
-.text {
+.text{
     color: #add8e6;
     font-size: 48px;
     font-weight: 700;
 }
 
-.underline {
+.underline{
     width: 61px;
     height: 6px;
     background: #add8e6;
     border-radius: 9px;
 }
 
-.inputs {
-    margin-top: 30px;
+.inputs{
+    margin-top: 55px;
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
 
-.input {
+.input{
     display: flex;
     align-items: center;
     margin: auto;
-    width: 100%; 
-    max-width: 480px; 
+    width: 480px;
     height: 80px;
     background: #eaeaea;
     border-radius: 6px;
 }
-
-.input img {
-    margin: 0px 20px;
+.input img{
+    margin: 0px 30px;
 }
-
-.input input {
+.input input{
     height: 50px;
-    width: 100%;
+    width: 400px;
     background: transparent;
     border: none;
     outline: none;
@@ -75,53 +58,38 @@ body, html {
     font-size: 19px;
 }
 
-.forgot-pswd {
-    text-align: center;
-    margin-top: 20px;
+.forgot-pswd{
+    padding-left: 62px;
+    margin-top: 27px;
     color: #797979;
     font-size: 18px;
 }
 
-.forgot-pswd span {
+.forgot-pswd span{
     color: #add8e6;
     cursor: pointer;
 }
 
-.submit-container {
+.submit-container{
     display: flex;
-    flex-wrap: wrap; 
-    gap: 20px;
-    margin: 40px auto;
-    justify-content: center;
+    gap: 30px;
+    margin: 60px auto;
 }
 
-.submit {
+.submit{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 200px; 
-    height: 50px;
+    width: 220px;
+    height: 59px;
     color: #fff;
     background: #add8e6;
     border-radius: 50px;
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 700;
     cursor: pointer;
 }
-
-.gray {
+.gray{
     background: #eaeaea;
     color: #676767;
-}
-
-@media (max-width: 768px) {
-    .input {
-        width: 100%;
-        max-width: 100%;
-        height: 70px;
-    }
-
-    .submit {
-        width: 90%;
-    }
 }
