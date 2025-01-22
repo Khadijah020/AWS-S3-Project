@@ -52,7 +52,7 @@ const LoginSignup = () => {
             <div className='inputs'>
 
                 {
-                    action == "Login" ? <div></div> : <div className='input'>
+                    action === "Login" ? <div></div> : <div className='input'>
                         <img src={userIcon} alt="" />
                         <input type="text" placeholder='Name' value={name} onChange={(event) => setName(event.target.value)} />
                     </div>
@@ -68,7 +68,7 @@ const LoginSignup = () => {
                     <input type="password" placeholder='Password' value={password} onChange={(event) => setPassword(event.target.value)} />
                 </div>
             </div>
-            {action == "Sign Up" ? <div></div> : <div className="forgot-pswd">Forgot Password? <span>Click Here!</span></div>}
+            {action === "Sign Up" ? <div></div> : <div className="forgot-pswd">Forgot Password? <span>Click Here!</span></div>}
             <div className="submit-container">
                 {action !== "Login" && (
                     <div className="submit gray" onClick={() => setAction("Login")}>Login</div>
