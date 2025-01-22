@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
-
-const AWS = require('aws-sdk');
-require('dotenv').config();
+import './FileUpload.css';
 
 const FileUpload = () => {
-  const [file, setFile] = useState(null);
-  const [error, setError] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
+  const [file, setFile] = useState(null); 
+  const [error, setError] = useState(''); 
+  const [progress, setProgress] = useState(0); 
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null); 
+  const [isDragActive, setIsDragActive] = useState(false); 
 
-  // Function to upload file to S3
   const uploadFile = async () => {
     const S3_BUCKET = "awsproj-1";
-    const REGION = AWS_REGION;
+    const REGION = process.env.REACT_APP_AWS_REGION;
 
     AWS.config.update({
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
     });
 
     const s3 = new AWS.S3({
@@ -32,51 +30,71 @@ const FileUpload = () => {
       Body: file,
     };
 
-    const upload = s3
-      .putObject(params)
-      .on("httpUploadProgress", (evt) => {
-        setProgress(parseInt((evt.loaded * 100) / evt.total));
-      })
-      .promise();
+    try {
+      await s3
+        .putObject(params)
+        .on('httpUploadProgress', (evt) => {
+          setProgress(Math.round((evt.loaded * 100) / evt.total));
+        })
+        .promise();
 
-    await upload
-      .then(async () => {
-        alert("File uploaded successfully.");
+      alert('File uploaded successfully.');
 
-        // Generate S3 file URL
-        const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
+      const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
 
-        // Save metadata in database
-        await axios.post('/api/file/metadata', {
-          fileName: file.name,
-          fileSize: file.size,
-          uploadDate: new Date(),
-          fileUrl,
-        });
-
-        setUploadedFileUrl(fileUrl);
-      })
-      .catch((err) => {
-        console.error('Upload failed:', err);
-        alert("File upload failed.");
+      await axios.post('/api/file/metadata', {
+        fileName: file.name,
+        fileSize: file.size,
+        uploadDate: new Date(),
+        fileUrl,
       });
+
+      setUploadedFileUrl(fileUrl);
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('File upload failed.');
+    }
   };
 
-  // Handle file selection with validation
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
+    validateFile(selectedFile);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragActive(false);
+    const selectedFile = e.dataTransfer.files[0];
+    validateFile(selectedFile);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragActive(false);
+  };
+
+  const validateFile = (selectedFile) => {
     setError('');
 
-    // Check file size (10MB limit)
-    if (selectedFile.size > 10 * 1024 * 1024) {
-      setError("File size exceeds 10MB limit.");
+    if (!selectedFile) {
+      setError('No file selected.');
       return;
     }
 
-    // Check file type
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError('File size exceeds 10MB limit.');
+      setFile(null);
+      return;
+    }
+
     const allowedFileTypes = ['application/pdf', 'image/png', 'image/jpeg', 'text/plain'];
     if (!allowedFileTypes.includes(selectedFile.type)) {
-      setError("Invalid file type. Only PDF, PNG, JPG, and TXT files are allowed.");
+      setError('Invalid file type. Only PDF, PNG, JPG, and TXT files are allowed.');
+      setFile(null);
       return;
     }
 
@@ -85,17 +103,22 @@ const FileUpload = () => {
 
   return (
     <div className="upload-box">
-      <p>Drag & Drop Files here to upload</p>
+      <div
+        className={`drag-drop-area ${isDragActive ? 'active' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <p>Drag & Drop Files here</p>
+      </div>
 
-      {/* Hidden file input for multiple file selection */}
       <input
         type="file"
         id="fileInput"
         onChange={handleFileChange}
-        style={{ display: 'none' }}
+        className="hidden-input"
       />
 
-      {/* Trigger file input when this button is clicked */}
       <button
         className="upload-button"
         onClick={() => document.getElementById('fileInput').click()}
@@ -103,33 +126,36 @@ const FileUpload = () => {
         Browse Files
       </button>
 
-      {/* Show error if file is invalid */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {file && (
+        <p className="file-name">
+          Selected File: <strong>{file.name}</strong>
+        </p>
+      )}
 
+      {error && <p className="error">{error}</p>}
 
-      {/* Show the selected file name */}
-      {file && <p>Selected File: {file.name}</p>}
+      {progress > 0 && (
+        <div className="progress-container">
+          <p>Uploading: {progress}%</p>
+          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+      )}
 
-      {/* Upload button */}
       <button
-        className="upload-button"
+        className={`upload-button-1 ${!file || progress > 0 ? 'disabled' : ''}`}
         onClick={uploadFile}
-        disabled={!file}
+        disabled={!file || progress > 0}
       >
         Upload
       </button>
 
-      {/* Show upload progress */}
-      {progress > 0 && <p>Upload Progress: {progress}%</p>}
-
-      {/* Display the uploaded file URL */}
       {uploadedFileUrl && (
-      <div>
-      <h3>Uploaded File:</h3>
-      <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
-        {uploadedFileUrl}
-      </a>
-      </div>
+        <div className="upload-result">
+          <p>File uploaded successfully!</p>
+          <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
+            Access it here
+          </a>
+        </div>
       )}
     </div>
   );

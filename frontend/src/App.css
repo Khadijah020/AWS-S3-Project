@@ -1,100 +1,64 @@
-.App {
-  text-align: center;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #e5f3fa;
 }
 
-nav {
-  background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-nav ul {
+.app-container {
   display: flex;
-  list-style-type: none;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-nav ul li a {
-  color: #333;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.hero {
-  padding: 50px 20px;
-  background: linear-gradient(120deg, #e0f7fa, #ffffff);
-  border-radius: 20px;
-  margin: 20px;
-}
-
-.hero h1 {
-  font-size: 36px;
-  font-weight: bold;
-  color: #333;
-}
-
-.hero p {
-  font-size: 18px;
-  color: #555;
-}
-
-.upload-box {
-  margin: 20px auto;
-  padding: 20px;
-  border: 2px dashed #007bff;
-  border-radius: 10px;
+.card {
   background-color: #ffffff;
-  width: 80%;
-}
-
-.upload-box p {
-  margin-bottom: 10px;
-  color: #777;
-}
-
-.upload-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.upload-button:hover {
-  background-color: #0056b3;
-}
-
-.cta-banner {
-  background-color: #fdecec;
+  width: 500px;
   padding: 20px;
-  margin: 20px auto;
   border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: #333;
 }
 
-.cta-banner p {
-  font-size: 18px;
-  margin-bottom: 10px;
+.title {
+  font-size: 1.8rem;
+  color: #ADD9E6;
+  margin-bottom: 20px;
 }
 
-.signup-button {
-  padding: 10px 20px;
-  background-color: #ff4081;
+.subtitle {
+  font-size: 1.2rem;
+  color: #4a4a4a;
+  margin-bottom: 5px;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  background-color: #B8D8E2;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 10px 15px;
+  border-radius: 30px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-.signup-button:hover {
-  background-color: #e91e63;
+button:hover {
+  background-color: #2270a6;
 }
 
-footer {
-  background-color: #f5f5f5;
-  padding: 20px;
-  margin-top: 20px;
-  color: #777;
-  font-size: 14px;
+button:disabled {
+  background-color: #EAEAEA;
+  cursor: not-allowed;
+}
+
+input[type="file"] {
+  display: none;
 }
