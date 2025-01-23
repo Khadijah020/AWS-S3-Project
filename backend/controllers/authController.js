@@ -1,5 +1,3 @@
-//Handles user authentication (registration, login)
-
 const asyncHandler = require('express-async-handler');
 const { registerUser, loginUser } = require('../services/authService');
 
