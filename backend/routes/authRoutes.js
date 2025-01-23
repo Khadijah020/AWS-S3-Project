@@ -1,11 +1,10 @@
-// Routes for user authentication and Registration
 const express = require('express');
-const { register, login } = require('../controllers/authController');
+const { register, login, currentUser } = require('../controllers/authController');
+const { protect } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 router.post('/register', register);
-
 router.post('/login', login);
+router.get('/current', protect, currentUser); // Protected route
 
 module.exports = router;
-
