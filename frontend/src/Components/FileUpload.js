@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import './FileUpload.css';
@@ -9,7 +9,7 @@ const FileUpload = () => {
   const [progress, setProgress] = useState(0); 
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null); 
   const [isDragActive, setIsDragActive] = useState(false); 
-  const [email, setEmail] = useState(''); // Email state
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const userEmail = localStorage.getItem('email');
@@ -55,7 +55,7 @@ const FileUpload = () => {
         fileSize: file.size,
         uploadDate: new Date(),
         fileUrl,
-        email, // Include the email in the metadata request
+        email,
       }).then((response) => {
         alert(response.data.message);
       }).catch((error) => {
@@ -65,9 +65,12 @@ const FileUpload = () => {
           alert("An error occurred. Please try again.");
         }
       });
-      
 
       setUploadedFileUrl(fileUrl);
+
+      // Reset file and progress after successful upload
+      setFile(null);
+      setProgress(0);
     } catch (err) {
       console.error('Upload failed:', err);
       alert('File upload failed.');
@@ -167,14 +170,7 @@ const FileUpload = () => {
         Upload
       </button>
 
-      {uploadedFileUrl && (
-        <div className="upload-result">
-         
-          <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
-           
-          </a>
-        </div>
-      )}
+      
     </div>
   );
 };
