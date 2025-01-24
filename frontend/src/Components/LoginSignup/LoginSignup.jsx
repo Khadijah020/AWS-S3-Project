@@ -31,7 +31,9 @@ const LoginSignup = ({ onLogin }) => {
           email,
           password,
         });
+        console.log(email);
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", email);
         alert("Login Successful!");
         onLogin(); // Trigger authentication state
         navigate('/upload'); // Redirect to upload page

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import './FileUpload.css';
@@ -9,6 +9,14 @@ const FileUpload = () => {
   const [progress, setProgress] = useState(0); 
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null); 
   const [isDragActive, setIsDragActive] = useState(false); 
+  const [email, setEmail] = useState(''); // Email state
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem('email');
+    console.log(userEmail);
+    if (userEmail) setEmail(userEmail);
+    else alert("User email not found. Please log in again.");
+  }, []);
 
   const uploadFile = async () => {
     const S3_BUCKET = "awsproj-1";
@@ -26,8 +34,9 @@ const FileUpload = () => {
 
     const params = {
       Bucket: S3_BUCKET,
-      Key: file.name,
+      Key: `${email}/${file.name}`,
       Body: file,
+      ContentType: file.type,
     };
 
     try {
@@ -40,7 +49,7 @@ const FileUpload = () => {
 
       alert('File uploaded successfully.');
 
-      const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
+      const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
 
       await axios.post('/api/file/metadata', {
         fileName: file.name,
