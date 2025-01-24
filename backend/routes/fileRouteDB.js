@@ -38,7 +38,7 @@ router.post("/metadata", async (req, res) => {
     // Update user storage
     user.storageUsed = newStorageUsed;
     await user.save();
-
+    user.updatedAt = new Date(); // Set the current date and time
     res.status(200).json({ message: "File uploaded and metadata saved successfully." });
   } catch (error) {
     console.error("Error saving file metadata:", error);
