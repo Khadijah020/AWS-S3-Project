@@ -1,12 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const fileSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  fileName: { type: String, required: true },
-  fileSize: { type: Number, required: true },
-  uploadDate: { type: Date, required: true },
-  fileKey: { type: String, required: true },
-  s3Url: { type: String, required: true },
-});
+const fileMetadataSchema = new mongoose.Schema(
+  {
+    fileName: { type: String, required: true },
+    fileSize: { type: Number, required: true }, // Store in bytes
+    uploadDate: { type: Date, default: Date.now },
+    fileUrl: { type: String, required: true },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('File', fileSchema);
+// Use existing model if it exists, otherwise create a new one
+const FileMetadata =
+  mongoose.models.FileMetadata || mongoose.model("File_Metadata", fileMetadataSchema);
+
+module.exports = FileMetadata;
