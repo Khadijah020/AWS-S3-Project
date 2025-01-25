@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './FileList.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./FileList.css";
 
 const FileList = () => {
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Helper function to convert file size from bytes to KB/MB
     const formatFileSize = (sizeInBytes) => {
         const sizeInKB = sizeInBytes / 1024;
         if (sizeInKB < 1024) {
@@ -22,34 +20,31 @@ const FileList = () => {
     const fetchFiles = async (page) => {
         setLoading(true);
         try {
-            console.log("hello")
-            const userEmail = localStorage.getItem('email');
-            console.log("Fetching files for email:", userEmail);
-    
+            const userEmail = localStorage.getItem("email");
             if (!userEmail) {
                 alert("You need to log in to view your files.");
                 setLoading(false);
                 return;
             }
-            console.log("reaching this part")
-    
+
             const response = await axios.get(
                 `http://localhost:5000/api/file/list?page=${page}&email=${userEmail}`
             );
-    
-            console.log("reaching this part 2")
-            console.log("Full API Response:", response);
-            console.log("Files:", response.data.files);
-    
-            setFiles(response.data.files);
+
+            const uniqueFiles = Array.from(
+                new Map(
+                    response.data.files.map((file) => [file.fileName, file])
+                ).values()
+            );
+
+            setFiles(uniqueFiles);
             setTotalPages(response.data.totalPages);
         } catch (err) {
-            console.error("Error fetching files in filelist:", err);
+            console.error("Error fetching files:", err);
         } finally {
             setLoading(false);
         }
     };
-    
 
     useEffect(() => {
         fetchFiles(currentPage);
@@ -66,23 +61,53 @@ const FileList = () => {
             <h2>Your Uploaded Files</h2>
             {loading ? (
                 <p>Loading files...</p>
-            ) : (
-                <div className="file-grid">
-                    {files.length > 0 ? (
-                        files.map((file) => (
-                            <div key={file._id} className="file-card">
-                                <p><strong>Name:</strong> {file.fileName}</p>
-                                <p><strong>Size:</strong> {formatFileSize(file.fileSize)}</p>
-                                <p><strong>Uploaded:</strong> {new Date(file.uploadDate).toLocaleString()}</p>
-                                <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
-                                    <button className="view-button">View/Download</button>
-                                </a>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No files uploaded yet.</p>
-                    )}
+            ) : files.length > 0 ? (
+                <div className="table-wrapper">
+                <table className="file-table">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Size</th>
+                            <th>Uploaded</th>
+                            <th>Url Expiration Time</th>
+                            <th>View File</th>
+                            <th>Delete File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {files.map((file) => (
+                            <tr key={file._id}>
+                                <td>{file.fileName}</td>
+                                <td>{formatFileSize(file.fileSize)}</td>
+                                <td>{new Date(file.uploadDate).toLocaleString()}</td>
+                                <td>
+                                    Expiration time
+                                </td>
+                                <td>
+                                    <a
+                                        href={file.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <button className="view-button">View</button>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href={file.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <button className="view-button">Delete</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
                 </div>
+            ) : (
+                <p>No files uploaded yet.</p>
             )}
             <div className="pagination">
                 <button
