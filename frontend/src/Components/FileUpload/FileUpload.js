@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './FileUpload.css';
 
 const FileUpload = () => {
@@ -10,6 +11,8 @@ const FileUpload = () => {
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null); 
   const [isDragActive, setIsDragActive] = useState(false); 
   const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userEmail = localStorage.getItem('email');
@@ -71,6 +74,8 @@ const FileUpload = () => {
       // Reset file and progress after successful upload
       setFile(null);
       setProgress(0);
+      navigate('/files');
+
     } catch (err) {
       console.error('Upload failed:', err);
       alert('File upload failed.');

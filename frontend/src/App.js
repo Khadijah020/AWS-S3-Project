@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import FileUpload from './Components/FileUpload/FileUpload';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
+import FileList from './Components/FileList/FileList';  // Import FileList component
+
 import './App.css';
 
 function App() {
@@ -27,6 +29,10 @@ function App() {
         <Route
           path="/upload"
           element={isAuthenticated ? <FileUpload /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/files"
+          element={isAuthenticated ? <FileList /> : <Navigate to="/login" />}  // Add route for FileList
         />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
