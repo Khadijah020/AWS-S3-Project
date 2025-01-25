@@ -28,6 +28,7 @@ const uploadFile = async (file, userId) => {
     fileSize: file.size,
     fileUrl: s3Response.Location,
   });
+  console.log(newFile);
   await newFile.save();
 
   return newFile;

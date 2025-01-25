@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import './FileUpload.css';
@@ -9,11 +9,10 @@ const FileUpload = () => {
   const [progress, setProgress] = useState(0); 
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null); 
   const [isDragActive, setIsDragActive] = useState(false); 
-  const [email, setEmail] = useState(''); // Email state
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const userEmail = localStorage.getItem('email');
-    console.log(userEmail);
     if (userEmail) setEmail(userEmail);
     else alert("User email not found. Please log in again.");
   }, []);
@@ -51,14 +50,27 @@ const FileUpload = () => {
 
       const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
 
-      await axios.post('/api/file/metadata', {
+      await axios.post('http://localhost:5000/api/file/metadata', {
         fileName: file.name,
         fileSize: file.size,
         uploadDate: new Date(),
         fileUrl,
+        email,
+      }).then((response) => {
+        alert(response.data.message);
+      }).catch((error) => {
+        if (error.response) {
+          alert(error.response.data.message); 
+        } else {
+          alert("An error occurred. Please try again.");
+        }
       });
 
       setUploadedFileUrl(fileUrl);
+
+      // Reset file and progress after successful upload
+      setFile(null);
+      setProgress(0);
     } catch (err) {
       console.error('Upload failed:', err);
       alert('File upload failed.');
@@ -158,14 +170,7 @@ const FileUpload = () => {
         Upload
       </button>
 
-      {uploadedFileUrl && (
-        <div className="upload-result">
-          <p>File uploaded successfully!</p>
-          <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
-            Access it here
-          </a>
-        </div>
-      )}
+      
     </div>
   );
 };
