@@ -3,6 +3,45 @@ const router = express.Router();
 const User = require("../models/User");
 const FileMetadata = require("../models/File");
 
+
+router.get("/list", async (req, res) => {
+  console.log("hi")
+  const { email } = req.query; // Retrieve email from request query
+  const { page = 1, limit = 10 } = req.query;
+  console.log('Query Parameters:', req.query);
+  if (!email) {
+    return res.status(400).json({ message: "User email is required." });
+  }
+  console.log("Received email:", email);
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const totalFiles = await FileMetadata.countDocuments({ uploadedBy: user._id });
+    const files = await FileMetadata.find({ uploadedBy: user._id })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .sort({ uploadDate: -1 });
+
+    res.status(200).json({
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalFiles / limit),
+      totalFiles,
+      files,
+    });
+  } catch (error) {
+    console.error("Error fetching user files:", error);
+    res.status(500).json({ message: "Error fetching user files." });
+  }
+});
+
+
+
+
+
 // POST /api/file/metadata
 router.post("/metadata", async (req, res) => {
   const { fileName, fileSize, uploadDate, fileUrl, email } = req.body;
