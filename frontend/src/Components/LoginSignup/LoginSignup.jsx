@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginSignup.css';
-import userIcon from '../Assets/person.png';
-import emailIcon from '../Assets/email.png';
-import passwordIcon from '../Assets/password.png';
+import userIcon from '../../Assets/person.png';
+import emailIcon from '../../Assets/email.png';
+import passwordIcon from '../../Assets/password.png';
 import axios from 'axios';
 
 const LoginSignup = ({ onLogin }) => {

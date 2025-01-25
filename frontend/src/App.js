@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import axios from 'axios';
-import FileUpload from './Components/FileUpload';
+import FileUpload from './Components/FileUpload/FileUpload';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
 import './App.css';
 

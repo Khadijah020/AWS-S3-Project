@@ -1,5 +1,5 @@
 import React from 'react';
-import '../Components/FileAction.css'; 
+import './FileAction.css'; 
 
 const FileActions = ({ file, onDelete }) => {
   return (
