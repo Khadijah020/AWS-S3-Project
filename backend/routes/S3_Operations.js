@@ -33,9 +33,9 @@ router.get("/get-url", async (req, res) => {
   }
 });
 
-// Delete a file from the S3 bucket
+/// Delete a file from the S3 bucket
 router.delete("/delete-file", async (req, res) => {
-  const { email, fileName } = req.body;
+  const { email, fileName } = req.query;
 
   if (!email || !fileName) {
     return res.status(400).json({ message: "Email and file name are required" });
