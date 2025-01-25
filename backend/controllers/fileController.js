@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
+const FileMetadata = require("../models/File");
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -8,6 +9,37 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
+exports.listFiles = async (req, res) => {
+  try {
+    const userId = req.user._id; // Assuming `req.user` is populated by an auth middleware
+    const { page = 1, limit = 10 } = req.query; // Default page = 1, limit = 10
+
+    // Fetch files for the logged-in user with pagination
+    const files = await FileMetadata.find({ uploadedBy: userId })
+      .sort({ uploadDate: -1 }) // Sort by most recent uploads
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    // Total count for pagination
+    const totalFiles = await FileMetadata.countDocuments({ uploadedBy: userId });
+
+    res.status(200).json({
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalFiles / limit),
+      totalFiles,
+      files: files.map((file) => ({
+        id: file._id,
+        fileName: file.fileName,
+        fileSize: (file.fileSize / 1024).toFixed(2) + " KB", // Convert bytes to KB
+        uploadDate: file.uploadDate,
+        fileUrl: file.fileUrl,
+      })),
+    });
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    res.status(500).json({ message: "Failed to fetch files. Please try again later." });
+  }
+};
 
 exports.uploadFileToS3 = async (req, res) => {
   try {

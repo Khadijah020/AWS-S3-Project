@@ -16,9 +16,10 @@ const LoginSignup = ({ onLogin }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    
     try {
       if (action === "Sign Up") {
+        //user register/signup
         await axios.post("http://localhost:5000/api/users/register", {
           username: name,
           email,
@@ -27,19 +28,29 @@ const LoginSignup = ({ onLogin }) => {
         alert("Registration successful! You can now log in.");
         setAction("Login");
       } else {
+        //user login
         const response = await axios.post("http://localhost:5000/api/users/login", {
           email,
           password,
         });
-        console.log(email);
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("email", email);
-        alert("Login Successful!");
-        onLogin(); // Trigger authentication state
-        navigate('/upload'); // Redirect to upload page
+  
+        
+        if (response.status === 200 && response.data.token) {
+          console.log("Login successful for:", email);
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("email", email);
+          alert("Login Successful!");
+          onLogin(); // Trigger authentication state
+          navigate('/upload'); // Redirect to upload page
+        }
+        else{
+          alert('Invalid Username or Password! Please try again!')
+        }
       }
     } catch (err) {
       console.error("Error:", err);
+  
+      // If there's an error, show the message in the UI
       if (err.response && err.response.data) {
         setError(err.response.data.message || "Something went wrong! Please try again.");
       } else {
@@ -47,6 +58,7 @@ const LoginSignup = ({ onLogin }) => {
       }
     }
   };
+  
 
     return (
         <div className='container'>
