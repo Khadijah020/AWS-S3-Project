@@ -13,10 +13,32 @@
     border-radius: 12px; /* Rounded corners for the box */
     padding: 20px; /* Inner padding */
     max-width: 90%; /* Limit the width of the table box */
-    width: 980px; /* Set a fixed width for the table box */
+    width: 1100px; /* Set a fixed width for the table box */
    
     margin: 20px auto; /* Center the table vertically */
 }
+
+.back-button {
+    background-color: #2b88d8;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 100;  /* Make it bolder */
+    font-size: 24px;   /* Increase size */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+
 
 .file-table {
     width: 100%; /* Ensure the table takes up the full width of the container */
@@ -27,7 +49,7 @@
 
 .file-table th,
 .file-table td {
-    padding: 10px 35px; /* Reduced vertical padding, increased horizontal padding */
+    padding: 10px 40px; /* Reduced vertical padding, increased horizontal padding */
 }
 
 .file-table th {
@@ -47,11 +69,13 @@
     background-color: #2b88d8;
     color: #fff;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px; /* Set consistent padding for all buttons */
     border-radius: 20px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: normal;
+    font-size: 16px; /* Set a consistent font size */
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: auto; /* Make sure the width is automatically adjusted to the content */
 }
 
 .view-button:hover {
