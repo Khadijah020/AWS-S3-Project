@@ -116,6 +116,39 @@ const FileList = () => {
     
         setShowModal(false); // Close the modal
     };
+
+    const handleDelete = async (file) => {
+        const email = localStorage.getItem("email");
+        if (!email) {
+            alert("You need to log in to delete files.");
+            return;
+        }
+
+        try {
+            const confirmed = window.confirm(`Are you sure you want to delete ${file.fileName}?`);
+            if (!confirmed) return;
+
+            const response = await axios.delete(
+                'http://localhost:5000/api/s3/delete-file',
+                {
+                    params: {
+                        email,
+                        fileName: file.fileName,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                alert("File deleted successfully.");
+                fetchFiles(currentPage); // Refresh the file list
+            } else {
+                alert("Failed to delete file.");
+            }
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            alert("An error occurred while deleting the file.");
+        }
+    };
     
     
     const closeModal = () => {
@@ -160,13 +193,12 @@ const FileList = () => {
                                     </a>
                                 </td>
                                 <td>
-                                    <a
-                                        href={file.fileUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <button className="view-button">Delete</button>
-                                    </a>
+                                <button
+                                    className="view-button"
+                                    onClick={() => handleDelete(file)}
+                                >
+                                    Delete
+                                </button>
                                 </td>
                                 <td>
                                         <button
