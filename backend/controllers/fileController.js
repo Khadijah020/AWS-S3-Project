@@ -49,7 +49,7 @@ exports.uploadFileToS3 = async (req, res) => {
     }
 
     const S3_BUCKET = process.env.AWS_BUCKET_NAME;
-    const fileKey = ${uuidv4()}-${file.originalname};
+    const fileKey =  `${uuidv4()}-${file.originalname}`;
 
     const params = {
       Bucket: S3_BUCKET,
