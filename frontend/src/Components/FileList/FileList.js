@@ -40,6 +40,17 @@ const FileList = () => {
                 ).values()
             );
 
+             uniqueFiles.forEach((file) => {
+                const expirationTime = localStorage.getItem(`${file.fileName}-expiration`);
+                
+                const currentTime = Date.now();
+                if (expirationTime && currentTime <= expirationTime) {
+                    file.remainingTime = Math.floor((expirationTime - currentTime) / 1000); 
+                } else {
+                    file.remainingTime = null; 
+                }
+            });
+
             setFiles(uniqueFiles);
             setTotalPages(response.data.totalPages);
         } catch (err) {
@@ -63,59 +74,85 @@ const FileList = () => {
         setShowModal(true);
     };
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchFiles(currentPage); // Auto-refresh every 10 seconds
+        }, 10000);
+    
+        return () => clearInterval(interval);
+    }, [currentPage]);
+
     const handleGenerate = async () => {
-        const email = localStorage.getItem("email");
-        const fileName = selectedFile.fileName;
-    
-        try {
-            // Convert user-selected expiration time to seconds
-            let expirationInSeconds;
-            switch (expirationTime) {
-                case "1 minute":
-                    expirationInSeconds = 60;
-                    break;
-                case "5 minutes":
-                    expirationInSeconds = 300;
-                    break;
-                case "10 minutes":
-                    expirationInSeconds = 600;
-                    break;
-                case "30 minutes":
-                    expirationInSeconds = 1800;
-                    break;
-                case "1 hour":
-                    expirationInSeconds = 3600;
-                    break;
-                case "1 day":
-                    expirationInSeconds = 86400;
-                    break;
-                default:
-                    expirationInSeconds = 300; // Default to 5 minutes
-            }
-    
-            const response = await fetch(
-                `http://localhost:5000/api/s3/get-url?email=${encodeURIComponent(
-                    email
-                )}&fileName=${encodeURIComponent(fileName)}&expiresIn=${expirationInSeconds}`
-            );
-    
-            if (!response.ok) {
-                throw new Error("Failed to generate pre-signed URL");
-            }
-    
-            const data = await response.json();
-            console.log("Generated Pre-signed URL:", data.url);
-    
-            // Copy URL to clipboard or display it to the user
-            navigator.clipboard.writeText(data.url);
-            alert("Pre-signed URL copied to clipboard!");
-        } catch (error) {
-            console.error("Error generating pre-signed URL:", error);
-            alert("Failed to generate pre-signed URL. Please try again.");
+    try {
+        if (!selectedFile) {
+            alert("No file selected for URL generation.");
+            return;
         }
-    
-        setShowModal(false); // Close the modal
-    };
+
+        const email = localStorage.getItem("email");
+        if (!email) {
+            alert("You need to log in to generate URLs.");
+            return;
+        }
+
+        const fileName = selectedFile.fileName;
+
+        // Convert user-selected expiration time to seconds
+        let expirationInSeconds;
+        switch (expirationTime) {
+            case "1 minute":
+                expirationInSeconds = 60;
+                break;
+            case "5 minutes":
+                expirationInSeconds = 300;
+                break;
+            case "10 minutes":
+                expirationInSeconds = 600;
+                break;
+            case "30 minutes":
+                expirationInSeconds = 1800;
+                break;
+            case "1 hour":
+                expirationInSeconds = 3600;
+                break;
+            case "1 day":
+                expirationInSeconds = 86400;
+                break;
+            default:
+                expirationInSeconds = 60; // Default to 1 minute
+        }
+
+        const response = await fetch(
+            `http://localhost:5000/api/s3/get-url?email=${encodeURIComponent(
+                email
+            )}&fileName=${encodeURIComponent(fileName)}&expiresIn=${expirationInSeconds}`
+        );  
+
+        if (!response.ok) {
+            throw new Error("Failed to generate pre-signed URL");
+        }
+
+        const data = await response.json();
+        console.log("Generated Pre-signed URL:", data.url);
+
+        // Save URL and expiration time to localStorage
+        localStorage.setItem(fileName, data.url);
+        const expirationTimestamp = Date.now() + expirationInSeconds * 1000; // Store timestamp in milliseconds
+        localStorage.setItem(`${fileName}-expiration`, expirationTimestamp);
+
+        // Copy URL to clipboard and notify user
+        await navigator.clipboard.writeText(data.url);
+        alert("Pre-signed URL copied to clipboard!");
+
+        // Close the modal
+        setShowModal(false);
+        window.location.reload();
+    } catch (error) {
+        console.error("Error generating pre-signed URL:", error);
+        alert("Failed to generate pre-signed URL. Please try again.");
+    }
+};
+
 
     const handleDelete = async (file) => {
         const email = localStorage.getItem("email");
@@ -161,7 +198,32 @@ const FileList = () => {
             alert("An error occurred while deleting the file.");
         }
     };
-    
+    const handleView = (file) => {
+        try {
+            const generatedURL = localStorage.getItem(file.fileName);
+            
+            if (!generatedURL) {
+                alert("Error: The URL for this file was not generated.");
+                return;
+            }
+            const expirationTime = localStorage.getItem(`${file.fileName}-expiration`);
+            if (!expirationTime) {
+                alert("Error: Expiration time not found.");
+                return;
+            }
+            const currentTime = Date.now();
+
+            if (currentTime > expirationTime) {
+                alert("Error: The link has expired.");
+                return;
+            }
+            // Open the URL in a new tab
+            window.open(generatedURL, "_blank");
+        } catch (error) {
+            console.error("Error viewing the file:", error);
+            alert("An unexpected error occurred. Please try again.");
+        }
+    };
     
     const closeModal = () => {
         setShowModal(false);
@@ -193,16 +255,17 @@ const FileList = () => {
                                 <td>{formatFileSize(file.fileSize)}</td>
                                 <td>{new Date(file.uploadDate).toLocaleString()}</td>
                                 <td>
-                                    Expiration time
+                                    {file.remainingTime
+                                        ? `${Math.floor(file.remainingTime / 60)} min ${file.remainingTime % 60} sec`
+                                        : "Not generated or expired"}
                                 </td>
                                 <td>
-                                    <a
-                                        href={file.fileUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <button
+                                    className="view-button"
+                                    onClick={() => handleView(file)}
                                     >
-                                        <button className="view-button">View</button>
-                                    </a>
+                                    view
+                                </button>
                                 </td>
                                 <td>
                                 <button
