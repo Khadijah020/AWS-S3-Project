@@ -87,6 +87,28 @@
     background-color: #B8D8E2;
   }
   
+  .view-files-button {
+    background-color: #ADD9E6; /* Green color */
+    color: white; /* White text */
+    padding: 10px 20px; /* Spacing */
+    font-size: 16px; /* Font size */
+    border: none; /* No border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 15px; /* Space above the button */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .view-files-button:hover {
+    background-color: #0f7a9b; /* Darker green on hover */
+  }
+  
+  .view-files-button:disabled {
+    background-color: #ccc; /* Gray for disabled state */
+    cursor: not-allowed; /* Disabled cursor */
+  }
+  
+
   .upload-result {
     margin-top: 20px;
     color: #2b88d8;

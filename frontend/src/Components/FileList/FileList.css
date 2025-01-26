@@ -15,7 +15,7 @@
     max-width: 90%; /* Limit the width of the table box */
     width: 980px; /* Set a fixed width for the table box */
    
-    margin: 20px auto; /* Center the table vertically */
+    margin: 10px auto; /* Center the table vertically */
 }
 
 .file-table {
