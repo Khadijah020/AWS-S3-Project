@@ -1,20 +1,20 @@
 .file-list-container {
     padding: 20px;
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    background-color: #add8e6;
     display: flex;
     flex-direction: column;
     align-items: center; /* Centers the content horizontally */
 }
 
 .table-wrapper {
-    background: #ffffff; /* White background for the box */
+    background: linear-gradient(to bottom, #e3f2fd, #ffffff); /* Gradient of blue to white for the table area */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     border-radius: 12px; /* Rounded corners for the box */
     padding: 20px; /* Inner padding */
     max-width: 90%; /* Limit the width of the table box */
-    width: 800px; /* Set a fixed width for the table box */
-    overflow-x: auto; /* Enable horizontal scrolling on smaller screens */
+    width: 980px; /* Set a fixed width for the table box */
+   
     margin: 20px auto; /* Center the table vertically */
 }
 
@@ -27,8 +27,7 @@
 
 .file-table th,
 .file-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
+    padding: 10px 35px; /* Reduced vertical padding, increased horizontal padding */
 }
 
 .file-table th {
@@ -90,6 +89,7 @@
     cursor: not-allowed;
     transform: none;
 }
+
 .modal-overlay {
     position: fixed;
     top: 0;
