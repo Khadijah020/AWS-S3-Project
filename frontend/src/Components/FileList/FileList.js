@@ -137,8 +137,18 @@ const FileList = () => {
                     },
                 }
             );
-
-            if (response.status === 200) {
+            const dbResponse = await fetch(`http://localhost:5000/api/file/delete-file-metadata`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    fileName: file.fileName,
+                }),
+            });
+          
+            if (response.status === 200 && dbResponse.status === 200) {
                 alert("File deleted successfully.");
                 setFiles((prevFiles) =>
                     prevFiles.filter((prevFile) => prevFile.fileName !== file.fileName)

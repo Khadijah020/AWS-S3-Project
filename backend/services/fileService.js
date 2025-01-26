@@ -34,15 +34,6 @@ const uploadFile = async (file, userId) => {
   return newFile;
 };
 
-// Generate a pre-signed URL
-const generatePresignedUrl = (fileKey) => {
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileKey,
-    Expires: 3600, // 1 hour
-  };
-  return s3.getSignedUrl('getObject', params);
-};
 
 // Function to delete file from S3
 const deleteFile = async (fileId) => {
