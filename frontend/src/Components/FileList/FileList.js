@@ -140,7 +140,9 @@ const FileList = () => {
 
             if (response.status === 200) {
                 alert("File deleted successfully.");
-                fetchFiles(currentPage); // Refresh the file list
+                setFiles((prevFiles) =>
+                    prevFiles.filter((prevFile) => prevFile.fileName !== file.fileName)
+                );
             } else {
                 alert("Failed to delete file.");
             }
