@@ -62,7 +62,8 @@ const FileList = () => {
         setSelectedFile(file);
         setShowModal(true);
     };
-    const handleGenerate = async() => {
+
+    const handleGenerate = async () => {
         const email = localStorage.getItem("email");
         const fileName = selectedFile.fileName;
     
@@ -112,8 +113,11 @@ const FileList = () => {
             console.error("Error generating pre-signed URL:", error);
             alert("Failed to generate pre-signed URL. Please try again.");
         }
-        setShowModal(false);
+    
+        setShowModal(false); // Close the modal
     };
+    
+    
     const closeModal = () => {
         setShowModal(false);
     };
@@ -130,7 +134,7 @@ const FileList = () => {
                         <tr>
                             <th>File Name</th>
                             <th>Size</th>
-                            <th>Uploaded</th>
+                            <th>Uploaded On</th>
                             <th>Url Expiration Time</th>
                             <th>View File</th>
                             <th>Delete File</th>

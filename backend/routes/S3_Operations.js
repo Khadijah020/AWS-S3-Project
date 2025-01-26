@@ -12,17 +12,19 @@ const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 
 // Generate a pre-signed URL to view or download a file
 router.get("/get-url", async (req, res) => {
-  const { email, fileName } = req.query;
+  const { email, fileName, expiresIn } = req.query;
 
   if (!email || !fileName) {
     return res.status(400).json({ message: "Email and file name are required" });
   }
 
+  const expirationTime = parseInt(expiresIn, 10) || 60 * 1; // Default to 1 minute
+
   try {
     const params = {
       Bucket: BUCKET_NAME,
       Key: `${email}/${fileName}`, // File path includes the email
-      Expires: 60 * 5, // URL expires in 5 minutes
+      Expires: expirationTime, // Custom expiration time in seconds
     };
 
     const url = await s3.getSignedUrlPromise("getObject", params);
@@ -32,6 +34,7 @@ router.get("/get-url", async (req, res) => {
     res.status(500).json({ message: "Error generating pre-signed URL", error });
   }
 });
+
 
 /// Delete a file from the S3 bucket
 router.delete("/delete-file", async (req, res) => {
