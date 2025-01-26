@@ -5,7 +5,6 @@ const FileMetadata = require("../models/File");
 
 
 router.get("/list", async (req, res) => {
-  console.log("hi")
   const { email } = req.query; // Retrieve email from request query
   const { page = 1, limit = 10 } = req.query;
   console.log('Query Parameters:', req.query);
