@@ -62,10 +62,62 @@ const FileList = () => {
         setSelectedFile(file);
         setShowModal(true);
     };
-    const handleGenerate = () => {
-        console.log(`Generating URL for ${selectedFile.fileName} with expiration: ${expirationTime}`);
-        setShowModal(false);
+
+    const handleGenerate = async () => {
+        const email = localStorage.getItem("email");
+        const fileName = selectedFile.fileName;
+    
+        try {
+            // Convert user-selected expiration time to seconds
+            let expirationInSeconds;
+            switch (expirationTime) {
+                case "1 minute":
+                    expirationInSeconds = 60;
+                    break;
+                case "5 minutes":
+                    expirationInSeconds = 300;
+                    break;
+                case "10 minutes":
+                    expirationInSeconds = 600;
+                    break;
+                case "30 minutes":
+                    expirationInSeconds = 1800;
+                    break;
+                case "1 hour":
+                    expirationInSeconds = 3600;
+                    break;
+                case "1 day":
+                    expirationInSeconds = 86400;
+                    break;
+                default:
+                    expirationInSeconds = 300; // Default to 5 minutes
+            }
+    
+            const response = await fetch(
+                `http://localhost:5000/api/s3/get-url?email=${encodeURIComponent(
+                    email
+                )}&fileName=${encodeURIComponent(fileName)}&expiresIn=${expirationInSeconds}`
+            );
+    
+            if (!response.ok) {
+                throw new Error("Failed to generate pre-signed URL");
+            }
+    
+            const data = await response.json();
+            console.log("Generated Pre-signed URL:", data.url);
+    
+            // Copy URL to clipboard or display it to the user
+            navigator.clipboard.writeText(data.url);
+            alert("Pre-signed URL copied to clipboard!");
+        } catch (error) {
+            console.error("Error generating pre-signed URL:", error);
+            alert("Failed to generate pre-signed URL. Please try again.");
+        }
+    
+        setShowModal(false); // Close the modal
     };
+    
+    
     const closeModal = () => {
         setShowModal(false);
     };
@@ -82,7 +134,7 @@ const FileList = () => {
                         <tr>
                             <th>File Name</th>
                             <th>Size</th>
-                            <th>Uploaded</th>
+                            <th>Uploaded On</th>
                             <th>Url Expiration Time</th>
                             <th>View File</th>
                             <th>Delete File</th>
