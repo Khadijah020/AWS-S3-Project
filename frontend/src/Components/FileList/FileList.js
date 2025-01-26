@@ -7,6 +7,9 @@ const FileList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [expirationTime, setExpirationTime] = useState("1 minute");
 
     const formatFileSize = (sizeInBytes) => {
         const sizeInKB = sizeInBytes / 1024;
@@ -55,6 +58,69 @@ const FileList = () => {
             setCurrentPage(newPage);
         }
     };
+    const handleGenerateUrlClick = (file) => {
+        setSelectedFile(file);
+        setShowModal(true);
+    };
+
+    const handleGenerate = async () => {
+        const email = localStorage.getItem("email");
+        const fileName = selectedFile.fileName;
+    
+        try {
+            // Convert user-selected expiration time to seconds
+            let expirationInSeconds;
+            switch (expirationTime) {
+                case "1 minute":
+                    expirationInSeconds = 60;
+                    break;
+                case "5 minutes":
+                    expirationInSeconds = 300;
+                    break;
+                case "10 minutes":
+                    expirationInSeconds = 600;
+                    break;
+                case "30 minutes":
+                    expirationInSeconds = 1800;
+                    break;
+                case "1 hour":
+                    expirationInSeconds = 3600;
+                    break;
+                case "1 day":
+                    expirationInSeconds = 86400;
+                    break;
+                default:
+                    expirationInSeconds = 300; // Default to 5 minutes
+            }
+    
+            const response = await fetch(
+                `http://localhost:5000/api/s3/get-url?email=${encodeURIComponent(
+                    email
+                )}&fileName=${encodeURIComponent(fileName)}&expiresIn=${expirationInSeconds}`
+            );
+    
+            if (!response.ok) {
+                throw new Error("Failed to generate pre-signed URL");
+            }
+    
+            const data = await response.json();
+            console.log("Generated Pre-signed URL:", data.url);
+    
+            // Copy URL to clipboard or display it to the user
+            navigator.clipboard.writeText(data.url);
+            alert("Pre-signed URL copied to clipboard!");
+        } catch (error) {
+            console.error("Error generating pre-signed URL:", error);
+            alert("Failed to generate pre-signed URL. Please try again.");
+        }
+    
+        setShowModal(false); // Close the modal
+    };
+    
+    
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
     return (
         <div className="file-list-container">
@@ -68,10 +134,11 @@ const FileList = () => {
                         <tr>
                             <th>File Name</th>
                             <th>Size</th>
-                            <th>Uploaded</th>
+                            <th>Uploaded On</th>
                             <th>Url Expiration Time</th>
                             <th>View File</th>
                             <th>Delete File</th>
+                            <th>Generate Pre-Signed URL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,6 +168,14 @@ const FileList = () => {
                                         <button className="view-button">Delete</button>
                                     </a>
                                 </td>
+                                <td>
+                                        <button
+                                            className="view-button"
+                                            onClick={() => handleGenerateUrlClick(file)}
+                                        >
+                                            Generate
+                                        </button>
+                                    </td>
                             </tr>
                         ))}
                     </tbody>
@@ -126,6 +201,41 @@ const FileList = () => {
                     Next
                 </button>
             </div>
+            {showModal && (
+    <div className="modal-overlay">
+        <div className="modal">
+            <div className="modal-header">
+                <h3>Generate Pre-Signed URL</h3>
+                <button className="close-button" onClick={closeModal}>
+                    ✖
+                </button>
+            </div>
+            <div className="modal-content">
+                <label htmlFor="expiration">Select Expiration Time:</label>
+                <select
+                    id="expiration"
+                    value={expirationTime}
+                    onChange={(e) => setExpirationTime(e.target.value)}
+                >
+                    <option value="1 minute">1 minute</option>
+                    <option value="5 minutes">5 minutes</option>
+                    <option value="10 minutes">10 minutes</option>
+                    <option value="30 minutes">30 minutes</option>
+                    <option value="1 hour">1 hour</option>
+                    <option value="1 day">1 day</option>
+                </select>
+            </div>
+            <div className="modal-footer">
+                <button className="apply-button" onClick={handleGenerate}>
+                    Apply
+                </button>
+                <button className="cancel-button" onClick={closeModal}>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+)}
         </div>
     );
 };
