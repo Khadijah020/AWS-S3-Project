@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { generateToken } = require('../config/jwt');
 const User = require('../models/User');
 const s3 = require('../config/aws');
 
@@ -47,11 +48,7 @@ const loginUser = async (email, password) => {
         throw new Error('Invalid email or password');
     }
 
-    const accessToken = jwt.sign(
-        { id: user._id, username: user.username, email: user.email },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '1h' }
-    );
+    const accessToken = generateToken(user)
     return accessToken;
 };
 
