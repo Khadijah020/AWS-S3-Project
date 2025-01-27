@@ -12,10 +12,13 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     border-radius: 12px; /* Rounded corners for the box */
     padding: 20px; /* Inner padding */
-    max-width: 90%; /* Limit the width of the table box */
-    width: 1100px; /* Set a fixed width for the table box */
-   
+    max-width: 100%; /* Limit the width of the table box */
+    width: 1150px; /* Set a fixed width for the table box */
+    overflow-x: auto; /* Enables horizontal scrolling if content overflows */
+    overflow-y: hidden;
     margin: 20px auto; /* Center the table vertically */
+    box-sizing: border-box;
+    scrollbar-gutter: stable;
 }
 
 .back-button {
