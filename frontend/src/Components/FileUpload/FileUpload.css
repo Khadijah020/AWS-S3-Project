@@ -95,4 +95,29 @@
   .hidden-input {
     display: none;
   }
+
+  .logout-button {
+    position: absolute;
+    top: 25px;
+    left: 20px;
+    background-color: #d9534f;  /* Red background */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .logout-button:hover {
+    background-color: #c9302c;  /* Darker red on hover */
+    transform: scale(1.05);
+  }
+  
+  .logout-button:active {
+    background-color: #ac2925;  /* Even darker red on active */
+    transform: scale(1);
+  }
+  
   
