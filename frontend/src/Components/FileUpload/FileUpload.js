@@ -207,6 +207,14 @@ const FileUpload = () => {
       <button className="view-files-button" onClick={handleClick}>
         View Uploaded Files
       </button>
+      <div>
+      <button
+        className="view-files-button"
+        onClick={() => navigate('/dashboard')}
+      >
+        View Analytics Dashboard
+      </button>
+      </div>
     </div>
   );
 };
