@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import useTokenValidation from '../../hooks/useTokenValidation'; // Import the hook
 import './FileUpload.css';
-import { jwtDecode } from 'jwt-decode';
-
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
@@ -12,47 +11,15 @@ const FileUpload = () => {
   const [progress, setProgress] = useState(0);
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(localStorage.getItem('email') || '');
 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    const userEmail = localStorage.getItem('email');
-    const token = localStorage.getItem('token');
-    
-    if (!userEmail || !token) {
-      // No email or token found, redirect to login
-      navigate('/login');
-    } else {
-      try {
-        const decodedToken = jwtDecode(token); // Decode the JWT to check expiry
-  
-        // Current time in milliseconds
-        const currentTime = Date.now();
-  
-        // Token expiry time in milliseconds (token.exp is in seconds)
-        const expirationTime = decodedToken.exp * 1000;
-  
-        console.log('Token expires at:', new Date(expirationTime).toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
-        console.log('Current time:', new Date(currentTime).toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
-  
-        // Check if the token is expired
-        if (expirationTime < currentTime) {
-          // Token is expired, log out the user
-          localStorage.clear();
-          navigate('/login');
-        }
-      } catch (err) {
-        console.error('Invalid token:', err);
-        localStorage.clear();
-        navigate('/login');
-      }
-    }
-  }, [navigate]);
-  
+  useTokenValidation(); // Use the custom hook for token validation
 
   const uploadFile = async () => {
-    const S3_BUCKET = "awsproj-1";
+    const S3_BUCKET = 'awsproj-1';
     const REGION = process.env.REACT_APP_AWS_REGION;
 
     AWS.config.update({
@@ -140,21 +107,11 @@ const FileUpload = () => {
     validateFile(selectedFile);
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragActive(false);
-    const selectedFile = e.dataTransfer.files[0];
-    validateFile(selectedFile);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragActive(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragActive(false);
-  };
+  const handleClick = () => {
+    if (location.pathname !== '/files') {
+        navigate('/files');
+    }
+};
 
   const validateFile = (selectedFile) => {
     setError('');
@@ -179,72 +136,78 @@ const FileUpload = () => {
 
     setFile(selectedFile);
   };
+
   const handleLogout = () => {
-    localStorage.clear();  
-    navigate('/login');    
+    localStorage.clear();
+    navigate('/login');
     window.location.reload();
   };
-  
 
   return (
     <div className="upload-box">
-    <button className="logout-button" onClick={handleLogout}>Logout</button>
-  <div
-    className={`drag-drop-area ${isDragActive ? 'active' : ''}`}
-    onDragOver={handleDragOver}
-    onDragLeave={handleDragLeave}
-    onDrop={handleDrop}
-  >
-    <p>Drag & Drop Files here</p>
-  </div>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
+      <div
+        className={`drag-drop-area ${isDragActive ? 'active' : ''}`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragActive(true);
+        }}
+        onDragLeave={() => setIsDragActive(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragActive(false);
+          const selectedFile = e.dataTransfer.files[0];
+          validateFile(selectedFile);
+        }}
+      >
+        <p>Drag & Drop Files here</p>
+      </div>
 
-  <input
-    type="file"
-    id="fileInput"
-    onChange={handleFileChange}
-    className="hidden-input"
-  />
+      <input
+        type="file"
+        id="fileInput"
+        onChange={handleFileChange}
+        className="hidden-input"
+      />
 
-  <div className="button-row">
-    <button
-      className="browse-files-button"
-      onClick={() => document.getElementById('fileInput').click()}
-    >
-      Browse Files
-    </button>
+      <div className="button-row">
+        <button
+          className="browse-files-button"
+          onClick={() => document.getElementById('fileInput').click()}
+        >
+          Browse Files
+        </button>
 
-    <button
-      className={`upload-button-1 ${!file || progress > 0 ? 'disabled' : ''}`}
-      onClick={uploadFile}
-      disabled={!file || progress > 0}
-    >
-      Upload
-    </button>
-  </div>
+        <button
+          className={`upload-button-1 ${!file || progress > 0 ? 'disabled' : ''}`}
+          onClick={uploadFile}
+          disabled={!file || progress > 0}
+        >
+          Upload
+        </button>
+      </div>
 
-  {file && (
-    <p className="file-name">
-      Selected File: <strong>{file.name}</strong>
-    </p>
-  )}
+      {file && (
+        <p className="file-name">
+          Selected File: <strong>{file.name}</strong>
+        </p>
+      )}
 
-  {error && <p className="error">{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-  {progress > 0 && (
-    <div className="progress-container">
-      <p>Uploading: {progress}%</p>
-      <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+      {progress > 0 && (
+        <div className="progress-container">
+          <p>Uploading: {progress}%</p>
+          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+      )}
+
+      <button className="view-files-button" onClick={handleClick}>
+        View Uploaded Files
+      </button>
     </div>
-  )}
-
-  <button
-    className="view-files-button"
-    onClick={() => navigate('/files')}
-  >
-    View Uploaded Files
-  </button>
-</div>
-
   );
 };
 

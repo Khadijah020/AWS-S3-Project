@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./FileList.css";
 import { useNavigate } from "react-router-dom";
-
+import useTokenValidation from "../../hooks/useTokenValidation"; // Importing the hook
 
 const FileList = () => {
+    useTokenValidation();  // Add the token validation hook here
+
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -13,7 +15,6 @@ const FileList = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [expirationTime, setExpirationTime] = useState("1 minute");
     const navigate = useNavigate();
-
 
     const formatFileSize = (sizeInBytes) => {
         const sizeInKB = sizeInBytes / 1024;
@@ -25,7 +26,6 @@ const FileList = () => {
     };
 
     const fetchFiles = async (page) => {
-
         setLoading(true);
         try {
             const userEmail = localStorage.getItem("email");
@@ -47,7 +47,6 @@ const FileList = () => {
 
             uniqueFiles.forEach((file) => {
                 const expirationTime = localStorage.getItem(`${file.fileName}-expiration`);
-
                 const currentTime = Date.now();
                 if (expirationTime && currentTime <= expirationTime) {
                     file.remainingTime = Math.floor((expirationTime - currentTime) / 1000);
@@ -74,6 +73,7 @@ const FileList = () => {
             setCurrentPage(newPage);
         }
     };
+
     const handleGenerateUrlClick = (file) => {
         setSelectedFile(file);
         setShowModal(true);
@@ -158,7 +158,6 @@ const FileList = () => {
         }
     };
 
-
     const handleDelete = async (file) => {
         const email = localStorage.getItem("email");
         if (!email) {
@@ -203,6 +202,7 @@ const FileList = () => {
             alert("An error occurred while deleting the file.");
         }
     };
+
     const handleView = (file) => {
         try {
             const generatedURL = localStorage.getItem(file.fileName);
