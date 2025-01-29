@@ -16,41 +16,80 @@ const LoginSignup = ({ onLogin }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
+    // Trim inputs and update state
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+    setName(trimmedName);
+    setEmail(trimmedEmail);
+    setPassword(trimmedPassword);
+
+    // Validation flags
+    let validationFailed = false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Name validation (Sign Up only)
+    if (action === "Sign Up") {
+      const nameRegex = /^[A-Za-z\s'-]+$/;
+      if (!trimmedName) {
+        alert("Please enter your name.");
+        validationFailed = true;
+      } else if (!nameRegex.test(trimmedName)) {
+        alert("Name can only contain letters, spaces, apostrophes, and hyphens.");
+        validationFailed = true;
+      }
+    }
+
+    // Email validation
+    if (!emailRegex.test(trimmedEmail)) {
+      alert("Please enter a valid email address.");
+      validationFailed = true;
+    }
+
+    // Password validation
+    if (action === "Sign Up") {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(trimmedPassword)) {
+        alert("Password must be at least 8 characters long and include:\n- One uppercase letter\n- One lowercase letter\n- One number\n- One special character (@$!%*?&)");
+        validationFailed = true;
+      }
+    } else {
+      if (!trimmedPassword) {
+        alert("Please enter your password.");
+        validationFailed = true;
+      }
+    }
+
+    if (validationFailed) return;
+
     try {
       if (action === "Sign Up") {
-        //user register/signup
         await axios.post("http://localhost:5000/api/users/register", {
-          username: name,
-          email,
-          password,
+          username: trimmedName,
+          email: trimmedEmail,
+          password: trimmedPassword,
         });
         alert("Registration successful! You can now log in.");
         setAction("Login");
       } else {
-        //user login
         const response = await axios.post("http://localhost:5000/api/users/login", {
-          email,
-          password,
+          email: trimmedEmail,
+          password: trimmedPassword,
         });
   
-        
         if (response.status === 200 && response.data.token) {
-          console.log("Login successful for:", email);
           localStorage.setItem("token", response.data.token);
-          localStorage.setItem("email", email);
+          localStorage.setItem("email", trimmedEmail);
           alert("Login Successful!");
-          onLogin(); // Trigger authentication state
-          navigate('/upload'); // Redirect to upload page
-        }
-        else{
-          alert('Invalid Username or Password! Please try again!')
+          onLogin();
+          navigate('/upload');
+        } else {
+          alert('Invalid Username or Password! Please try again!');
         }
       }
     } catch (err) {
       console.error("Error:", err);
-  
-      // If there's an error, show the message in the UI
       if (err.response && err.response.data) {
         setError(err.response.data.message || "Something went wrong! Please try again.");
       } else {
