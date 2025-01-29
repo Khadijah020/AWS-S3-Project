@@ -35,7 +35,6 @@ const FileUpload = () => {
     const fileKey = `${email}/${file.name}`;
 
     try {
-      // Check if file exists in S3
       const paramsCheck = {
         Bucket: S3_BUCKET,
         Key: fileKey,
@@ -55,7 +54,6 @@ const FileUpload = () => {
           }
         });
 
-      // Prepare metadata and save first
       const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
       
       const metadataResponse = await axios.post('http://localhost:5000/api/file/metadata', {
@@ -67,7 +65,6 @@ const FileUpload = () => {
       });
       alert(metadataResponse.data.message);
 
-      // Proceed with S3 upload after successful metadata save
       const paramsUpload = {
         Bucket: S3_BUCKET,
         Key: fileKey,

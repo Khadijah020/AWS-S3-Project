@@ -13,26 +13,24 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
-    console.log('No token found');
     return res.status(401).json({ message: 'Not authorized, no token provided' });
   }
 
   try {
     console.log('Verifying token with secret:', process.env.ACCESS_TOKEN_SECRET ? 'Secret exists' : 'Missing');
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log('Decoded token:', decoded);
 
     const user = await User.findById(decoded.user.id).select('-password');
     console.log('Found user:', user ? user.email : 'not found');
 
     if (!user) {
-      console.log('User not found in database');
       return res.status(401).json({ message: 'User not found' });
     }
 
     req.user = user;
     next();
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Token verification error:', error);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired. Please log in again.' });

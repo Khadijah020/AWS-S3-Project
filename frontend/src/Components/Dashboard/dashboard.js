@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './dashboard.css';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -9,11 +9,13 @@ const Dashboard = () => {
     totalStorageUsed: 0,
     mostRecentUpload: null, 
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate();  
 
   useEffect(() => {
+    // function for authenticating the token and fetching information
     const fetchDashboardStats = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -60,8 +62,8 @@ const Dashboard = () => {
 
       <div className="dashboard-container">
         <button
-          className="back-button"  // Add the same class for styling
-          onClick={() => navigate('/upload')}  // Navigate to the upload page
+          className="back-button"  
+          onClick={() => navigate('/upload')}  
         >
           ←
         </button>
@@ -85,7 +87,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-card">
             <h3>Total Storage Used</h3>
-            <p>{stats.totalFiles > 0 ? stats.totalStorageUsed + ' MB' : '0 MB'}</p> {/* Show 0 MB if no files */}
+            <p>{stats.totalFiles > 0 ? stats.totalStorageUsed + ' MB' : '0 MB'}</p> 
           </div>
         </div>
       </div>

@@ -6,7 +6,8 @@ const fetchDashboardStats = asyncHandler(async (req, res) => {
         const email = req.user.email;
         const stats = await getDashboardStats(email);
         res.status(200).json(stats);
-    } catch (error) {
+    } 
+    catch (error) {
         console.error('Dashboard stats error:', error);
         res.status(500).json({ 
             message: error.message || 'Failed to fetch dashboard statistics'
