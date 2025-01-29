@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useTokenValidation from '../../hooks/useTokenValidation'; // Import the hook
+import useTokenValidation from '../../hooks/useTokenValidation';
 import './FileUpload.css';
 
 const FileUpload = () => {
@@ -16,7 +16,7 @@ const FileUpload = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useTokenValidation(); // Use the custom hook for token validation
+  useTokenValidation();
 
   const uploadFile = async () => {
     const S3_BUCKET = 'awsproj-1';
@@ -35,6 +35,7 @@ const FileUpload = () => {
     const fileKey = `${email}/${file.name}`;
 
     try {
+      // Check if file exists in S3
       const paramsCheck = {
         Bucket: S3_BUCKET,
         Key: fileKey,
@@ -54,6 +55,19 @@ const FileUpload = () => {
           }
         });
 
+      // Prepare metadata and save first
+      const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
+      
+      const metadataResponse = await axios.post('http://localhost:5000/api/file/metadata', {
+        fileName: file.name,
+        fileSize: file.size,
+        uploadDate: new Date(),
+        fileUrl,
+        email,
+      });
+      alert(metadataResponse.data.message);
+
+      // Proceed with S3 upload after successful metadata save
       const paramsUpload = {
         Bucket: S3_BUCKET,
         Key: fileKey,
@@ -69,35 +83,12 @@ const FileUpload = () => {
         .promise();
 
       alert('File uploaded successfully.');
-
-      const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
-
-      await axios
-        .post('http://localhost:5000/api/file/metadata', {
-          fileName: file.name,
-          fileSize: file.size,
-          uploadDate: new Date(),
-          fileUrl,
-          email,
-        })
-        .then((response) => {
-          alert(response.data.message);
-        })
-        .catch((error) => {
-          if (error.response) {
-            alert(error.response.data.message);
-          } else {
-            alert('An error occurred. Please try again.');
-          }
-        });
-
       setUploadedFileUrl(fileUrl);
       setFile(null);
       setProgress(0);
     } catch (err) {
-      console.error('Upload failed:', err);
       if (err.message !== 'File already exists.') {
-        alert('File upload failed.');
+        alert('File upload failed. Upload Size exceedes 100 MB Account Limit.');
       }
     }
   };
@@ -109,9 +100,9 @@ const FileUpload = () => {
 
   const handleClick = () => {
     if (location.pathname !== '/files') {
-        navigate('/files');
+      navigate('/files');
     }
-};
+  };
 
   const validateFile = (selectedFile) => {
     setError('');
@@ -208,12 +199,12 @@ const FileUpload = () => {
         View Uploaded Files
       </button>
       <div>
-      <button
-        className="view-files-button"
-        onClick={() => navigate('/dashboard')}
-      >
-        View Analytics Dashboard
-      </button>
+        <button
+          className="view-files-button"
+          onClick={() => navigate('/dashboard')}
+        >
+          View Analytics Dashboard
+        </button>
       </div>
     </div>
   );
