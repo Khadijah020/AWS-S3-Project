@@ -124,7 +124,6 @@ const LoginSignup = ({ onLogin }) => {
                     <input type="password" placeholder='Password' value={password} onChange={(event) => setPassword(event.target.value)} />
                 </div>
             </div>
-            {action === "Sign Up" ? <div></div> : <div className="forgot-pswd">Forgot Password? <span>Click Here!</span></div>}
             <div className="submit-container">
                 {action !== "Login" && (
                     <div className="submit gray" onClick={() => setAction("Login")}>Login</div>
