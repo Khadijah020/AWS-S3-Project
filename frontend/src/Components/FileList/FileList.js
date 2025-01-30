@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./FileList.css";
 import { useNavigate } from "react-router-dom";
-import useTokenValidation from "../../hooks/useTokenValidation"; // Importing the hook
 
 const FileList = () => {
-    useTokenValidation();  // Add the token validation hook here
 
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
