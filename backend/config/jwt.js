@@ -10,7 +10,7 @@ const generateToken = (user) => {
             },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '10s' }
     );
 
     console.log('Token generated with exp at:', new Date(Date.now() + 15 * 1000).toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));

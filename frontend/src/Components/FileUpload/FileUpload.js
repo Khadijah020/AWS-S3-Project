@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useTokenValidation from '../../hooks/useTokenValidation'; // Import the hook
+//import useTokenValidation from '../../hooks/useTokenValidation'; // Import the hook
 import './FileUpload.css';
 
 const FileUpload = () => {
@@ -11,14 +11,18 @@ const FileUpload = () => {
   const [progress, setProgress] = useState(0);
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
   const [isDragActive, setIsDragActive] = useState(false);
-  const [email, setEmail] = useState(localStorage.getItem('email') || '');
+  const [email] = useState(localStorage.getItem('email') || ''); // Avoid unnecessary state updates
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  useTokenValidation(); // Use the custom hook for token validation
+  console.log('hello from file upload')
+  //useTokenValidation(); // Ensure this doesn't cause unnecessary renders
+  console.log('hello from file upload');
 
-  const uploadFile = async () => {
+  const uploadFile = useCallback(async () => {
+    if (!file) return;
+
     const S3_BUCKET = 'awsproj-1';
     const REGION = process.env.REACT_APP_AWS_REGION;
 
@@ -35,16 +39,12 @@ const FileUpload = () => {
     const fileKey = `${email}/${file.name}`;
 
     try {
-      const paramsCheck = {
-        Bucket: S3_BUCKET,
-        Key: fileKey,
-      };
-
+      // Check if file exists before uploading
       await s3
-        .headObject(paramsCheck)
+        .headObject({ Bucket: S3_BUCKET, Key: fileKey })
         .promise()
         .then(() => {
-          alert('File with the same name already exists. Please rename your file or choose a different one.');
+          alert('File with the same name already exists.');
           throw new Error('File already exists.');
         })
         .catch((err) => {
@@ -54,66 +54,42 @@ const FileUpload = () => {
           }
         });
 
-      const paramsUpload = {
-        Bucket: S3_BUCKET,
-        Key: fileKey,
-        Body: file,
-        ContentType: file.type,
-      };
-
+      // Upload the file
       await s3
-        .putObject(paramsUpload)
-        .on('httpUploadProgress', (evt) => {
-          setProgress(Math.round((evt.loaded * 100) / evt.total));
-        })
+        .putObject({ Bucket: S3_BUCKET, Key: fileKey, Body: file, ContentType: file.type })
+        .on('httpUploadProgress', (evt) => setProgress(Math.round((evt.loaded * 100) / evt.total)))
         .promise();
-
-      alert('File uploaded successfully.');
 
       const fileUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${email}/${file.name}`;
 
-      await axios
-        .post('http://localhost:5000/api/file/metadata', {
-          fileName: file.name,
-          fileSize: file.size,
-          uploadDate: new Date(),
-          fileUrl,
-          email,
-        })
-        .then((response) => {
-          alert(response.data.message);
-        })
-        .catch((error) => {
-          if (error.response) {
-            alert(error.response.data.message);
-          } else {
-            alert('An error occurred. Please try again.');
-          }
-        });
+      await axios.post('http://localhost:5000/api/file/metadata', {
+        fileName: file.name,
+        fileSize: file.size,
+        uploadDate: new Date(),
+        fileUrl,
+        email,
+      });
 
       setUploadedFileUrl(fileUrl);
       setFile(null);
       setProgress(0);
+      alert('File uploaded successfully.');
+
     } catch (err) {
       console.error('Upload failed:', err);
       if (err.message !== 'File already exists.') {
         alert('File upload failed.');
       }
     }
-  };
+  }, [file, email]);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    validateFile(selectedFile);
-  };
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (location.pathname !== '/files') {
-        navigate('/files');
+      navigate('/files');
     }
-};
+  }, [location.pathname, navigate]);
 
-  const validateFile = (selectedFile) => {
+  const validateFile = useCallback((selectedFile) => {
     setError('');
 
     if (!selectedFile) {
@@ -129,25 +105,24 @@ const FileUpload = () => {
 
     const allowedFileTypes = ['application/pdf', 'image/png', 'image/jpeg', 'text/plain'];
     if (!allowedFileTypes.includes(selectedFile.type)) {
-      setError('Invalid file type. Only PDF, PNG, JPG, and TXT files are allowed.');
+      setError('Invalid file type.');
       setFile(null);
       return;
     }
 
     setFile(selectedFile);
-  };
+  }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.clear();
     navigate('/login');
     window.location.reload();
-  };
+  }, [navigate]);
 
   return (
     <div className="upload-box">
-      <button className="logout-button" onClick={handleLogout}>
-        Logout
-      </button>
+      <button className="logout-button" onClick={handleLogout}>Logout</button>
+
       <div
         className={`drag-drop-area ${isDragActive ? 'active' : ''}`}
         onDragOver={(e) => {
@@ -158,8 +133,7 @@ const FileUpload = () => {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragActive(false);
-          const selectedFile = e.dataTransfer.files[0];
-          validateFile(selectedFile);
+          validateFile(e.dataTransfer.files[0]);
         }}
       >
         <p>Drag & Drop Files here</p>
@@ -168,33 +142,21 @@ const FileUpload = () => {
       <input
         type="file"
         id="fileInput"
-        onChange={handleFileChange}
+        onChange={(e) => validateFile(e.target.files[0])}
         className="hidden-input"
       />
 
       <div className="button-row">
-        <button
-          className="browse-files-button"
-          onClick={() => document.getElementById('fileInput').click()}
-        >
+        <button className="browse-files-button" onClick={() => document.getElementById('fileInput').click()}>
           Browse Files
         </button>
 
-        <button
-          className={`upload-button-1 ${!file || progress > 0 ? 'disabled' : ''}`}
-          onClick={uploadFile}
-          disabled={!file || progress > 0}
-        >
+        <button className={`upload-button-1 ${!file || progress > 0 ? 'disabled' : ''}`} onClick={uploadFile} disabled={!file || progress > 0}>
           Upload
         </button>
       </div>
 
-      {file && (
-        <p className="file-name">
-          Selected File: <strong>{file.name}</strong>
-        </p>
-      )}
-
+      {file && <p className="file-name">Selected File: <strong>{file.name}</strong></p>}
       {error && <p className="error">{error}</p>}
 
       {progress > 0 && (
@@ -204,9 +166,7 @@ const FileUpload = () => {
         </div>
       )}
 
-      <button className="view-files-button" onClick={handleClick}>
-        View Uploaded Files
-      </button>
+      <button className="view-files-button" onClick={handleClick}>View Uploaded Files</button>
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
-//import axios from 'axios';
 import FileUpload from './Components/FileUpload/FileUpload';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
-import FileList from './Components/FileList/FileList';  // Import FileList component
+import FileList from './Components/FileList/FileList';
+import useTokenValidation from './hooks/useTokenValidation'; // Import the hook
 
 import './App.css';
 
@@ -21,6 +21,8 @@ function App() {
 
   return (
     <Router>
+      {/* Now, the hook is inside Router, so it can safely use useNavigate */}
+      <TokenValidationWrapper />
       <Routes>
         <Route
           path="/login"
@@ -32,12 +34,18 @@ function App() {
         />
         <Route
           path="/files"
-          element={isAuthenticated ? <FileList /> : <Navigate to="/login" />}  // Add route for FileList
+          element={isAuthenticated ? <FileList /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
 }
+
+// This wrapper component ensures that the hook is inside <Router>
+const TokenValidationWrapper = () => {
+  useTokenValidation();
+  return null;
+};
 
 export default App;
