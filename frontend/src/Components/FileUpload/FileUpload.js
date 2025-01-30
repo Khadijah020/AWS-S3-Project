@@ -15,6 +15,7 @@ const FileUpload = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Uploading file
   const uploadFile = useCallback(async () => {
     if (!file) return;
   
@@ -41,15 +42,13 @@ const FileUpload = () => {
   }, [file, email]);
   
   
-  
-  
-  
   const handleClick = useCallback(() => {
     if (location.pathname !== '/files') {
       navigate('/files');
     }
   }, [location.pathname, navigate]);
 
+  // Checking file selection
   const validateFile = useCallback((selectedFile) => {
     setError('');
 
@@ -64,6 +63,7 @@ const FileUpload = () => {
       return;
     }
 
+    // Validation for file types
     const allowedFileTypes = ['application/pdf', 'image/png', 'image/jpeg', 'text/plain'];
     if (!allowedFileTypes.includes(selectedFile.type)) {
       setError('Invalid file type.');

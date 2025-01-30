@@ -3,12 +3,14 @@ require('dotenv').config();
 const File = require('../models/File');
 const fs = require('fs');
 
+// Connecting to AWS
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
 });
 
+// Uploading file to S3
 const uploadFile = async (file, userId) => {
   const fileContent = fs.readFileSync(file.path);
   const params = {
@@ -20,6 +22,7 @@ const uploadFile = async (file, userId) => {
   };
   const s3Response = await s3.upload(params).promise();
 
+  // Storing file in database
   const newFile = new File({
     user: userId,
     filename: file.filename,
@@ -33,6 +36,7 @@ const uploadFile = async (file, userId) => {
   return newFile;
 };
 
+// Deleting file from S3 and database
 const deleteFile = async (fileId) => {
   const file = await File.findById(fileId);
   if (!file) throw new Error('File not found');

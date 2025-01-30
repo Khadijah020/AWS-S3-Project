@@ -26,7 +26,7 @@ const registerUser = async (username, email, password) => {
         console.log("User saved to DB");
 
         // Create a folder in S3 for the user
-        const folderName = `${email}/`; // S3 uses "/" for folder-like structures
+        const folderName = `${email}/`; 
         const params = {
             Bucket: "awsproj-1",
             Key: folderName,

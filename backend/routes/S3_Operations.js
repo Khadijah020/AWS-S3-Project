@@ -18,13 +18,14 @@ router.get("/get-url", async (req, res) => {
     return res.status(400).json({ message: "Email and file name are required" });
   }
 
-  const expirationTime = parseInt(expiresIn, 10) || 60 * 1; // Default to 1 minute
+  // Default to 1 minute
+  const expirationTime = parseInt(expiresIn, 10) || 60 * 1; 
 
   try {
     const params = {
       Bucket: BUCKET_NAME,
-      Key: `${email}/${fileName}`, // File path includes the email
-      Expires: expirationTime, // Custom expiration time in seconds
+      Key: `${email}/${fileName}`, 
+      Expires: expirationTime, 
     };
 
     const url = await s3.getSignedUrlPromise("getObject", params);
@@ -36,7 +37,7 @@ router.get("/get-url", async (req, res) => {
 });
 
 
-/// Delete a file from the S3 bucket
+// Delete a file from the S3 bucket
 router.delete("/delete-file", async (req, res) => {
   const { email, fileName } = req.query;
 
@@ -47,7 +48,7 @@ router.delete("/delete-file", async (req, res) => {
   try {
     const params = {
       Bucket: BUCKET_NAME,
-      Key: `${email}/${fileName}`, // File path includes the email
+      Key: `${email}/${fileName}`, 
     };
 
     await s3.deleteObject(params).promise();
@@ -69,12 +70,13 @@ router.get("/list-files", async (req, res) => {
   try {
     const params = {
       Bucket: BUCKET_NAME,
-      Prefix: `${email}/`, // List files under the user's email folder
+      // List files under the user's email folder
+      Prefix: `${email}/`, 
     };
 
     const data = await s3.listObjectsV2(params).promise();
     const files = data.Contents.map((file) => ({
-      fileName: file.Key.replace(`${email}/`, ""), // Remove email prefix from file name
+      fileName: file.Key.replace(`${email}/`, ""), 
       lastModified: file.LastModified,
       size: file.Size,
     }));

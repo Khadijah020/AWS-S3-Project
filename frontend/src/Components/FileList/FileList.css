@@ -4,19 +4,19 @@
     background-color: #add8e6;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centers the content horizontally */
+    align-items: center;
 }
 
 .table-wrapper {
-    background: linear-gradient(to bottom, #d6e4e9, #ffffff); /* Gradient of blue to white for the table area */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    border-radius: 12px; /* Rounded corners for the box */
-    padding: 20px; /* Inner padding */
-    max-width: 100%; /* Limit the width of the table box */
-    width: 1150px; /* Set a fixed width for the table box */
-    overflow-x: auto; /* Enables horizontal scrolling if content overflows */
+    background: linear-gradient(to bottom, #d6e4e9, #ffffff); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px; 
+    padding: 20px; 
+    max-width: 100%; 
+    width: 1150px; 
+    overflow-x: auto; 
     overflow-y: hidden;
-    margin: 20px auto; /* Center the table vertically */
+    margin: 20px auto; 
     box-sizing: border-box;
     scrollbar-gutter: stable;
 }
@@ -28,8 +28,8 @@
     padding: 10px 18px;
     border-radius: 20px;
     cursor: pointer;
-    font-weight: 100;  /* Make it bolder */
-    font-size: 24px;   /* Increase size */
+    font-weight: 100; 
+    font-size: 24px;  
     transition: background-color 0.3s ease, transform 0.2s ease;
     position: absolute;
     left: 20px;
@@ -44,7 +44,7 @@
 
 
 .file-table {
-    width: 100%; /* Ensure the table takes up the full width of the container */
+    width: 100%; 
     border-collapse: collapse;
     font-size: 16px;
     text-align: left;
@@ -52,7 +52,7 @@
 
 .file-table th,
 .file-table td {
-    padding: 10px 40px; /* Reduced vertical padding, increased horizontal padding */
+    padding: 10px 40px; 
 }
 
 .file-table th {
@@ -72,13 +72,13 @@
     background-color: #2b88d8;
     color: #fff;
     border: none;
-    padding: 10px 20px; /* Set consistent padding for all buttons */
+    padding: 10px 20px; 
     border-radius: 20px;
     cursor: pointer;
     font-weight: normal;
-    font-size: 16px; /* Set a consistent font size */
+    font-size: 16px; 
     transition: background-color 0.3s ease, transform 0.2s ease;
-    width: auto; /* Make sure the width is automatically adjusted to the content */
+    width: auto; 
 }
 
 .view-button:hover {
@@ -123,8 +123,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Darker background */
-    backdrop-filter: blur(13px); /* Stronger blur effect */
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(13px); 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,14 +132,14 @@
 }
 
 .modal {
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    backdrop-filter: blur(15px); /* Slight blur for the modal itself */
+    background: rgba(255, 255, 255, 0.9); 
+    backdrop-filter: blur(15px);
     width: 400px;
-    border-radius: 20px; /* Rounded edges */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Softer shadow */
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); 
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevent content from overflowing rounded corners */
+    overflow: hidden; 
 }
 
 .modal-header {

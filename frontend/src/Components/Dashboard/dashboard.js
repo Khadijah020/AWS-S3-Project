@@ -15,7 +15,7 @@ const Dashboard = () => {
   const navigate = useNavigate();  
 
   useEffect(() => {
-    // function for authenticating the token and fetching information
+    // Function for authenticating the token and fetching information
     const fetchDashboardStats = async () => {
       try {
         const token = localStorage.getItem('token');

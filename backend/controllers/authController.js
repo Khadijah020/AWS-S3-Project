@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { registerUser, loginUser } = require('../services/authService');
 
+// User registeration
 const register = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -13,6 +14,7 @@ const register = asyncHandler(async (req, res) => {
     res.status(201).json({ id: user._id, email: user.email });
 });
 
+// User Login 
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {

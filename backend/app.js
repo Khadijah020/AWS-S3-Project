@@ -1,4 +1,3 @@
-// server.js (or app.js)
 import express from 'express';
 import { generatePresignedUrl } from './fileController.js';
 

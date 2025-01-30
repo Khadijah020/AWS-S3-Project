@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import FileUpload from './Components/FileUpload/FileUpload';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
-import useTokenValidation from './hooks/useTokenValidation'; // Import the hook
-import FileList from './Components/FileList/FileList';  // Import FileList component
+import useTokenValidation from './hooks/useTokenValidation'; 
+import FileList from './Components/FileList/FileList'; 
 import Dashboard from './Components/Dashboard/dashboard';
 
 import './App.css';
@@ -46,7 +46,6 @@ function App() {
   );
 }
 
-// This wrapper component ensures that the hook is inside <Router>
 const TokenValidationWrapper = () => {
   useTokenValidation();
   return null;
