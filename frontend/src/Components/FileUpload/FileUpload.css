@@ -113,7 +113,7 @@
     position: absolute;
     top: 25px;
     left: 20px;
-    background-color: #d9534f;  /* Red background */
+    background-color: #d9534f;  
     color: white;
     padding: 10px 20px;
     font-size: 16px;
@@ -124,12 +124,12 @@
   }
   
   .logout-button:hover {
-    background-color: #c9302c;  /* Darker red on hover */
+    background-color: #c9302c;  
     transform: scale(1.05);
   }
   
   .logout-button:active {
-    background-color: #ac2925;  /* Even darker red on active */
+    background-color: #ac2925;  
     transform: scale(1);
   }
   

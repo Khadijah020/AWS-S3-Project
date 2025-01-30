@@ -20,7 +20,6 @@ const uploadFile = async (file, userId) => {
   };
   const s3Response = await s3.upload(params).promise();
 
-  // Save file metadata in MongoDB
   const newFile = new File({
     user: userId,
     filename: file.filename,
@@ -34,8 +33,6 @@ const uploadFile = async (file, userId) => {
   return newFile;
 };
 
-
-// Function to delete file from S3
 const deleteFile = async (fileId) => {
   const file = await File.findById(fileId);
   if (!file) throw new Error('File not found');

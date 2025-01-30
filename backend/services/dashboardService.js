@@ -3,19 +3,13 @@ const User = require('../models/User');
 
 const getDashboardStats = async (email) => {
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('User not found'); 
     }
 
-    // Get total files uploaded by the user
     const totalFiles = await FileMetadata.countDocuments({ uploadedBy: user._id });
-
-    // Get total storage used (from user model)
     const totalStorageUsed = user.storageUsed;
-
-    // Get most recent upload
     const mostRecentUpload = await FileMetadata.findOne({ uploadedBy: user._id })
       .sort({ uploadDate: -1 })
       .limit(1);
