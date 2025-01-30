@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import FileUpload from './Components/FileUpload/FileUpload';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
-import FileList from './Components/FileList/FileList';
 import useTokenValidation from './hooks/useTokenValidation'; // Import the hook
+import FileList from './Components/FileList/FileList';  // Import FileList component
+import Dashboard from './Components/Dashboard/dashboard';
 
 import './App.css';
 
@@ -34,6 +35,10 @@ function App() {
         <Route
           path="/files"
           element={isAuthenticated ? <FileList /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/dashboard"
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

@@ -18,7 +18,6 @@ const upload = multer({
 
 router.post('/upload',protect, upload.single('file'), fileController.uploadFileToS3);
 
-// New endpoint for listing files
 router.get("/list",protect, fileController.listFiles);
 
 module.exports = router;

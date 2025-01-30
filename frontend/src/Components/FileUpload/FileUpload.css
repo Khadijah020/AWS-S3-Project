@@ -36,7 +36,7 @@
   }
   
   
-  .upload-button {
+  .browse-files-button {
     padding: 15px 23px;
     border: none;
     border-radius: 30px;
@@ -57,6 +57,19 @@
     background-color: #B8D8E2;
     font-size: 13px;
     margin: 10px 10px;
+    font-weight: bold;
+  }
+
+  .view-files-button {
+    padding: 15px 23px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    color: #fff;
+    background-color: #ADD9E6;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 12px;
     font-weight: bold;
   }
   
@@ -100,7 +113,7 @@
     position: absolute;
     top: 25px;
     left: 20px;
-    background-color: #d9534f;  /* Red background */
+    background-color: #d9534f;  
     color: white;
     padding: 10px 20px;
     font-size: 16px;
@@ -111,12 +124,12 @@
   }
   
   .logout-button:hover {
-    background-color: #c9302c;  /* Darker red on hover */
+    background-color: #c9302c;  
     transform: scale(1.05);
   }
   
   .logout-button:active {
-    background-color: #ac2925;  /* Even darker red on active */
+    background-color: #ac2925;  
     transform: scale(1);
   }
   

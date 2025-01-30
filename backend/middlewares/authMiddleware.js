@@ -4,10 +4,12 @@ const User = require('../models/User');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
+  console.log('Headers:', req.headers);
+  console.log('Auth header:', req.headers.authorization);
 
-  // Check for "Bearer TOKEN" format in the Authorization header
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+    console.log('Extracted token:', token);
   }
 
   if (!token) {
@@ -15,17 +17,21 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    // Verify the token
+    console.log('Verifying token with secret:', process.env.ACCESS_TOKEN_SECRET ? 'Secret exists' : 'Missing');
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    // Optionally fetch the user from the database (if needed)
-    req.user = await User.findById(decoded.user.id).select('-password'); // Exclude password field
-    if (!req.user) {
+    const user = await User.findById(decoded.user.id).select('-password');
+    console.log('Found user:', user ? user.email : 'not found');
+
+    if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    next(); // Proceed to the next middleware or route handler
-  } catch (error) {
+    req.user = user;
+    next();
+  } 
+  catch (error) {
+    console.error('Token verification error:', error);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired. Please log in again.' });
     }

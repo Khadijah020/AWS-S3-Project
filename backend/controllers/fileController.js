@@ -11,31 +11,31 @@ AWS.config.update({
 const s3 = new AWS.S3();
 exports.listFiles = async (req, res) => {
   try {
-    const userId = req.user._id; // Assuming `req.user` is populated by an auth middleware
-    const { page = 1, limit = 10 } = req.query; // Default page = 1, limit = 10
+    const userId = req.user._id; 
+    const { page = 1, limit = 10 } = req.query; 
 
-    // Fetch files for the logged-in user with pagination
     const files = await FileMetadata.find({ uploadedBy: userId })
-      .sort({ uploadDate: -1 }) // Sort by most recent uploads
+      .sort({ uploadDate: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
 
-    // Total count for pagination
     const totalFiles = await FileMetadata.countDocuments({ uploadedBy: userId });
 
     res.status(200).json({
       currentPage: parseInt(page),
       totalPages: Math.ceil(totalFiles / limit),
       totalFiles,
+
       files: files.map((file) => ({
         id: file._id,
         fileName: file.fileName,
-        fileSize: (file.fileSize / 1024).toFixed(2) + " KB", // Convert bytes to KB
+        fileSize: (file.fileSize / 1024).toFixed(2) + " KB",
         uploadDate: file.uploadDate,
         fileUrl: file.fileUrl,
       })),
     });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Error fetching files:", error);
     res.status(500).json({ message: "Failed to fetch files. Please try again later." });
   }
@@ -50,13 +50,11 @@ exports.uploadFileToS3 = async (req, res) => {
 
     const S3_BUCKET = process.env.AWS_BUCKET_NAME;
     const fileKey =  `${uuidv4()}-${file.originalname}`;
-
     const params = {
       Bucket: S3_BUCKET,
       Key: fileKey,
       Body: file.buffer,
     };
-
     const s3Result = await s3.upload(params).promise();
 
     res.status(200).json({
@@ -64,7 +62,8 @@ exports.uploadFileToS3 = async (req, res) => {
       fileUrl: s3Result.Location,
       fileKey,
     });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('S3 Upload Error:', error);
     res.status(500).json({ error: 'Failed to upload file to S3.' });
   }

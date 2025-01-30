@@ -8,7 +8,7 @@
 }
 
 .table-wrapper {
-    background: linear-gradient(to bottom, #e3f2fd, #ffffff); /* Gradient of blue to white for the table area */
+    background: linear-gradient(to bottom, #d6e4e9, #ffffff); /* Gradient of blue to white for the table area */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     border-radius: 12px; /* Rounded corners for the box */
     padding: 20px; /* Inner padding */
