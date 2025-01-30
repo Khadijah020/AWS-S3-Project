@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-//import useTokenValidation from '../../hooks/useTokenValidation'; // Import the hook
 import './FileUpload.css';
 
 const FileUpload = () => {
@@ -17,7 +16,6 @@ const FileUpload = () => {
   const location = useLocation();
 
   console.log('hello from file upload')
-  //useTokenValidation(); // Ensure this doesn't cause unnecessary renders
   console.log('hello from file upload');
 
   const uploadFile = useCallback(async () => {

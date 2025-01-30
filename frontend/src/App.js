@@ -21,7 +21,6 @@ function App() {
 
   return (
     <Router>
-      {/* Now, the hook is inside Router, so it can safely use useNavigate */}
       <TokenValidationWrapper />
       <Routes>
         <Route

@@ -8,46 +8,43 @@ const useTokenValidation = () => {
     const hasNavigated = useRef(false); 
 
     useEffect(() => {
-        console.log('hello from hook')
 
         const validateToken = () => {
-            console.log('hello from function inside hook')
             const token = localStorage.getItem('token');
             const userEmail = localStorage.getItem('email');
-
+        
             if (!token || !userEmail) {
                 if (location.pathname !== '/login' && !hasNavigated.current) {
+                    console.log('No token found! Please Login! ');
                     localStorage.clear();
                     hasNavigated.current = true;
-                    console.log('trying to go to login')
-                    navigate('/login', { replace: true });
+                    window.location.href = '/login'; // 🔥 Force full page reload
                 }
                 return;
             }
+        
             try {
                 const decodedToken = jwtDecode(token);
                 const expirationTime = decodedToken.exp * 1000;
                 const currentTime = Date.now();
-
+        
                 if (expirationTime < currentTime) {
-                    alert('Session expired! Please reload page to continue!');
-
-                    console.log('expired token, going to login')
-                    if (location.pathname !== '/login' && !hasNavigated.current) {
-                        localStorage.clear();
-                        hasNavigated.current = true;
-                        navigate('/login', { replace: true });
-                    }
+                    alert('Session expired! Logging out the user');        
+                    localStorage.clear();
+                    hasNavigated.current = true;
+                    
+                    window.location.href = '/login'; // 🔥 Immediate redirect
                 }
             } catch (err) {
                 console.error('[Token Validation] Invalid token:', err);
                 if (location.pathname !== '/login' && !hasNavigated.current) {
                     localStorage.clear();
                     hasNavigated.current = true;
-                    navigate('/login', { replace: true });
+                    window.location.href = '/login'; // 🔥 Ensures full logout
                 }
             }
         };
+        
 
         validateToken();
 
