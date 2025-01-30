@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const fileMetadataSchema = new mongoose.Schema(
   {
     fileName: { type: String, required: true },
-    fileSize: { type: Number, required: true }, // Store in bytes
+    fileSize: { type: Number, required: true }, 
     uploadDate: { type: Date, default: Date.now },
     fileUrl: { type: String, required: true },
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference User
-    uploadedByEmail: { type: String, required: true }, // Save the email
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    uploadedByEmail: { type: String, required: true }, 
   },
   { timestamps: true }
 );

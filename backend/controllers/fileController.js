@@ -8,12 +8,14 @@ AWS.config.update({
   region: process.env.AWS_REGION,
 });
 
+// Listing file functionality
 const s3 = new AWS.S3();
 exports.listFiles = async (req, res) => {
   try {
     const userId = req.user._id; 
     const { page = 1, limit = 10 } = req.query; 
 
+    // Placing files in list in correct order
     const files = await FileMetadata.find({ uploadedBy: userId })
       .sort({ uploadDate: -1 })
       .skip((page - 1) * limit)
@@ -41,6 +43,8 @@ exports.listFiles = async (req, res) => {
   }
 };
 
+
+// Uploading file functionality
 exports.uploadFileToS3 = async (req, res) => {
   try {
     const file = req.file; 

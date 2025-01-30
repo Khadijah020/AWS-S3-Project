@@ -16,8 +16,8 @@ const userSchema = new mongoose.Schema(
       required: [true, "Enter password"],
     },
     storageUsed: {
-      type: Number, // Floating-point number
-      default: 0.0, // Default value if not provided
+      type: Number, 
+      default: 0.0, 
     },
   },
   {

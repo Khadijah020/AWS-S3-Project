@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Generating token for every user log
 const generateToken = (user) => {
     const token = jwt.sign(
         {

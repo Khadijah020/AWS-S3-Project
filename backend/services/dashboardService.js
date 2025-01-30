@@ -3,11 +3,13 @@ const User = require('../models/User');
 
 const getDashboardStats = async (email) => {
   try {
+    // Finding user via email
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('User not found'); 
     }
 
+    // Fetching Dashboard Stats
     const totalFiles = await FileMetadata.countDocuments({ uploadedBy: user._id });
     const totalStorageUsed = user.storageUsed;
     const mostRecentUpload = await FileMetadata.findOne({ uploadedBy: user._id })

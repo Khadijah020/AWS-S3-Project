@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { getDashboardStats } = require('../services/dashboardService');
 
+// Fetching stats for analytic dashboard
 const fetchDashboardStats = asyncHandler(async (req, res) => {
     try {
         const email = req.user.email;

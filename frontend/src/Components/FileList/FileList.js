@@ -4,7 +4,6 @@ import "./FileList.css";
 import { useNavigate } from "react-router-dom";
 
 const FileList = () => {
-
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -23,6 +22,7 @@ const FileList = () => {
         return `${sizeInMB.toFixed(2)} MB`;
     };
 
+    // Fetching files to display in list
     const fetchFiles = async (page) => {
         setLoading(true);
         try {
@@ -79,7 +79,8 @@ const FileList = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            fetchFiles(currentPage); // Auto-refresh every 10 seconds
+            // Auto-refresh every 10 seconds
+            fetchFiles(currentPage); 
         }, 10000);
 
         return () => clearInterval(interval);
@@ -122,7 +123,7 @@ const FileList = () => {
                     expirationInSeconds = 86400;
                     break;
                 default:
-                    expirationInSeconds = 60; // Default to 1 minute
+                    expirationInSeconds = 60;
             }
 
             const response = await fetch(
@@ -140,14 +141,14 @@ const FileList = () => {
 
             // Save URL and expiration time to localStorage
             localStorage.setItem(fileName, data.url);
-            const expirationTimestamp = Date.now() + expirationInSeconds * 1000; // Store timestamp in milliseconds
+            // Store timestamp in milliseconds
+            const expirationTimestamp = Date.now() + expirationInSeconds * 1000; 
             localStorage.setItem(`${fileName}-expiration`, expirationTimestamp);
 
             // Copy URL to clipboard and notify user
             await navigator.clipboard.writeText(data.url);
             alert("Pre-signed URL copied to clipboard!");
 
-            // Close the modal
             setShowModal(false);
             window.location.reload();
         } catch (error) {
@@ -156,6 +157,7 @@ const FileList = () => {
         }
     };
 
+    // Deleting file
     const handleDelete = async (file) => {
         const email = localStorage.getItem("email");
         if (!email) {
@@ -201,6 +203,7 @@ const FileList = () => {
         }
     };
 
+    // Viewing file from list
     const handleView = (file) => {
         try {
             const generatedURL = localStorage.getItem(file.fileName);

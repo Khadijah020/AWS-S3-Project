@@ -18,7 +18,8 @@ const useTokenValidation = () => {
                     console.log('No token found! Please Login! ');
                     localStorage.clear();
                     hasNavigated.current = true;
-                    window.location.href = '/login'; // 🔥 Force full page reload
+                    // Full page reload
+                    window.location.href = '/login'; 
                 }
                 return;
             }
@@ -32,15 +33,15 @@ const useTokenValidation = () => {
                     alert('Session expired! Logging out the user');        
                     localStorage.clear();
                     hasNavigated.current = true;
-                    
-                    window.location.href = '/login'; // 🔥 Immediate redirect
+                    // Redirecting 
+                    window.location.href = '/login'; 
                 }
             } catch (err) {
                 console.error('[Token Validation] Invalid token:', err);
                 if (location.pathname !== '/login' && !hasNavigated.current) {
                     localStorage.clear();
                     hasNavigated.current = true;
-                    window.location.href = '/login'; // 🔥 Ensures full logout
+                    window.location.href = '/login'; 
                 }
             }
         };
